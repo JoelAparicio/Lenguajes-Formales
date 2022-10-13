@@ -85,12 +85,12 @@ def main():
         if not ret:
             break
         frame = detector.detectar_manos(frame)
-        # coord, rect_box = detector.rastreo_posicion(frame)
+        #coord, rect_box = detector.rastreo_posicion(frame)
 
         ctiempo = time.time()
         fps = 1 / (ctiempo - ptiempo)
         ptiempo = ctiempo
-        cv2.putText(frame, str(int(fps)), (10, 30), cv2.FONT_ITALIC, 1, (29,11,214), 4)
+        cv2.putText(frame, str(int(fps)), (10, 30), cv2.FONT_ITALIC, 1, (29, 11, 214), 4)
 
         cv2.imshow("Video", frame)
         k = cv2.waitKey(1)
