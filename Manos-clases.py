@@ -17,8 +17,7 @@ class principal():
 
         self.clase_manos = mp.solutions.hands
         self.puntos_interes = mp.solutions.drawing_utils  # coloca los puntos rojos o los 21 puntos de interes
-        self.manos = self.clase_manos.Hands(self.modo, self.complejidad_modelo, self.maxmanos, self.mindeteccion,
-                                            self.minrastreo)
+        self.manos = self.clase_manos.Hands(self.modo, self.complejidad_modelo, self.maxmanos, self.mindeteccion, self.minrastreo)
         self.dedos_punta = [4, 8, 12, 16, 20]
 
     def detectar_manos(self, frame, dibujar=True):  # funcion para detectar las manos con el opencv
@@ -29,11 +28,10 @@ class principal():
         if self.resultados.multi_hand_landmarks:
             for mano in self.resultados.multi_hand_landmarks:
                 if dibujar:
-                    self.puntos_interes.draw_landmarks(frame, mano,
-                                                       self.clase_manos.HAND_CONNECTIONS)  # se dibujan las conexiones entre los 21 puntos
+                    self.puntos_interes.draw_landmarks(frame, mano, self.clase_manos.HAND_CONNECTIONS)  # se dibujan las conexiones entre los 21 puntos
         return frame
 
-    def rastreo_posicion(self, frame, numero_mano=0, dibujar=True):
+    def rastreo_posicion(self, frame, numero_mano=0, dibujar=True, texto=""):
         coord_x = []
         coord_y = []
         rect_box = []  # dibujar el rectangulo que sigue a la mano
@@ -46,34 +44,31 @@ class principal():
                 coord_x.append(cx)
                 coord_y.append(cy)
                 self.coord.append([id, cx, cy])
-                if dibujar:
-                    cv2.circle(frame, (cx, cy), 5, (0, 0, 0), cv2.FILLED)  # se dibuja un circulo
 
             xmin, xmax = min(coord_x), max(coord_x)
             ymin, ymax = min(coord_y), max(coord_y)
             rect_box = xmin, ymin, xmax, ymax
             if dibujar:
-                cv2.rectangle(frame, (xmin - 20, ymin - 20), (xmax + 20, ymax + 20), (0, 255, 0), 2)
-            return self.coord, rect_box
+                #cv2.rectangle(frame, (xmin - 20, ymin - 20), (xmax + 20, ymax + 20), (0, 255, 0), 2)
+                cv2.putText(frame, '{}'.format(texto), (xmin - 20, ymin - 25), 5, 1.5, (0, 0, 255), 1, cv2.LINE_AA)
+        return self.coord, rect_box
 
-        def dedos_levantados(self):
-            dedos = []
-            if self.coord[self.dedos_punta[0]][1] > self.coord[self.dedos_punta[0] - 1][1]:
+    def dedos_levantados(self):
+        dedos = []
+        if self.coord[self.dedos_punta[0]][1] > self.coord[self.dedos_punta[0] - 1][0]:
+            dedos.append(1)
+        else:
+            dedos.append(0)
+
+        for id in range(1, 5):
+            if self.coord[self.dedos_punta[id]][2] < self.coord[self.dedos_punta[id] - 2][2]:
                 dedos.append(1)
             else:
                 dedos.append(0)
-
-            for id in range(1, 5):
-                if self.coord[self.dedos_punta[id]][2] < self.coord[self.dedos_punta[id] - 2][2]:
-                    dedos.append(1)
-                else:
-                    dedos.append(0)
-            return dedos
+        return dedos
 
 
 def main():
-    ptiempo = 0
-
     cap = cv2.VideoCapture(0)
     cap.set(3, 640)
     cap.set(4, 480)
@@ -85,13 +80,13 @@ def main():
         if not ret:
             break
         frame = detector.detectar_manos(frame)
-        #coord, rect_box = detector.rastreo_posicion(frame)
-
-        ctiempo = time.time()
-        fps = 1 / (ctiempo - ptiempo)
-        ptiempo = ctiempo
-        cv2.putText(frame, str(int(fps)), (10, 30), cv2.FONT_ITALIC, 1, (29, 11, 214), 4)
-
+        coord, rect_box = detector.rastreo_posicion(frame, texto="Mano")#rect_box es el rectangulo que sigue a la mano y almacena las coordenadas minimas y maximas de cada punto
+        #coord es una lista que almacena las coordenadas de cada punto de interes
+        print(rect_box)
+        #dedos = detector.dedos_levantados()
+        #print(dedos)
+        #if dedos[0] == 1 and dedos[1] == 1:
+            #print("Pulgar y indice levantados")
         cv2.imshow("Video", frame)
         k = cv2.waitKey(1)
         if k == 27:
