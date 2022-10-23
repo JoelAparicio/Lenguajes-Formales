@@ -110,7 +110,7 @@ def main():
                 texto = "Dedo indice levantado"
             if dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 1 and dedos[3] == 0 and dedos[4] == 0:
                 texto = "Dedo indice y medio levantados"
-            if dedos[0] == 1 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
+            elif dedos[0] == 1 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
                 texto = "Dedo indice y pulgar levantados"
 
 #recordatorio: Meter en bucle while para que al estar en posicion inicial, se pueda acceder a otra posiciones iniciales
