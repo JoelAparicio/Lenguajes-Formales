@@ -104,16 +104,19 @@ def main():
         if len(coord) != 0:#len(coord) cuenta la cantidad de puntos de interes
             x1, y1 = coord[4][1], coord[4][2]  # Se extraen las coordenadas del punto 4
             x2, y2 = coord[8][1], coord[8][2]  # Se extraen las coordenadas del punto 8
+            x3, y3 = coord[5][1], coord[5][2]  # se extraen las coordenas del punto 5
             dedos = detector.dedos_levantados()
-
+            print (y2, y3)
+            cv2.line(frame, (320, 0), (320, 480), (255, 0, 0), 4)#linea vertical
+            cv2.line(frame, (0, 240), (640, 240), (255, 0, 0), 4)#linea horizontal
             if dedos[0] == 1 and dedos[1] == 1 and dedos[2] == 1 and dedos[3] == 1 and dedos[4] == 1:
                 texto = "Posicion inicial reconocida"
-                if dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
-                    texto = "Dedo indice levantado"
-                if dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 1 and dedos[3] == 0 and dedos[4] == 0:
-                    texto = "Dedo indice y medio levantados"
-                if dedos[0] == 1 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
-                    texto = "Dedo indice y pulgar levantados"
+            if dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
+                texto = "Dedo indice levantado"
+            if dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 1 and dedos[3] == 0 and dedos[4] == 0:
+                texto = "Dedo indice y medio levantados"
+            if dedos[0] == 1 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
+                texto = "Dedo indice y pulgar levantados"
 
 #recordatorio: Meter en bucle while para que al estar en posicion inicial, se pueda acceder a otra posiciones iniciales
 
