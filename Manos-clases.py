@@ -6,7 +6,7 @@ from math import acos, degrees
 import time
 
 
-class principal():
+class principal:
     def __init__(self, modo=False, model_complex=1, max_cant_manos=1, min_confianza_deteccion=0.8,
                  min_confianza_rastreo=0.8):  # Si no se ingresa valores, estos seran los valores predeterminados
         self.modo = modo  # para ingresar el modo de la imagen, si es estatico o en tiempo real
@@ -20,11 +20,13 @@ class principal():
         self.manos = self.clase_manos.Hands(self.modo, self.complejidad_modelo, self.maxmanos, self.mindeteccion,
                                             self.minrastreo)
         self.dedos_punta = [4, 8, 12, 16, 20]
+        self.resultados = None
+        self.coord = None
 
     def detectar_manos(self, frame, dibujar=True):  # funcion para detectar las manos con el opencv
 
         color = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # convierte la entrada BGR a RGB en opencv
-        self.resultados = self.manos.process(color)  # se crea una variable para
+        self.resultados = self.manos.process(color)  # se crea una variable para almacenar los resultados
 
         if self.resultados.multi_hand_landmarks:
             for mano in self.resultados.multi_hand_landmarks:
@@ -52,7 +54,7 @@ class principal():
             rect_box = xmin, ymin, xmax, ymax
             if dibujar:
                 # cv2.rectangle(frame, (xmin - 20, ymin - 20), (xmax + 20, ymax + 20), (0, 255, 0), 2)
-                cv2.putText(frame, '{}'.format(texto), (xmin - 20, ymin - 25), 5, 1.5, (0, 0, 255), 1, cv2.LINE_AA)
+                cv2.putText(frame, '{}'.format(texto), (xmin - 20, ymin - 25), 5, 1.0, (0, 0, 255), 1, cv2.LINE_AA)
         return self.coord, rect_box
 
     def dedos_levantados(self):
@@ -99,19 +101,19 @@ def main():
                                                     texto=texto)  # rect_box es el rectangulo que sigue a la mano y almacena las coordenadas minimas y maximas de cada punto
         # coord es una lista que almacena las coordenadas de cada punto de interes
         # print(coord)
-        if len(coord) != 0:
+        if len(coord) != 0:#len(coord) cuenta la cantidad de puntos de interes
             x1, y1 = coord[4][1], coord[4][2]  # Se extraen las coordenadas del punto 4
             x2, y2 = coord[8][1], coord[8][2]  # Se extraen las coordenadas del punto 8
             dedos = detector.dedos_levantados()
 
             if dedos[0] == 1 and dedos[1] == 1 and dedos[2] == 1 and dedos[3] == 1 and dedos[4] == 1:
-                texto = "Posicion inicial"
-            if dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
-                texto = "Dedo indice levantado"
-            if dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 1 and dedos[3] == 0 and dedos[4] == 0:
-                texto = "Dedo indice y medio levantados"
-            elif dedos[0] == 1 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
-                texto = "Dedo indice y pulgar levantados"
+                texto = "Posicion inicial reconocida"
+                if dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
+                    texto = "Dedo indice levantado"
+                if dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 1 and dedos[3] == 0 and dedos[4] == 0:
+                    texto = "Dedo indice y medio levantados"
+                if dedos[0] == 1 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
+                    texto = "Dedo indice y pulgar levantados"
 
 #recordatorio: Meter en bucle while para que al estar en posicion inicial, se pueda acceder a otra posiciones iniciales
 
