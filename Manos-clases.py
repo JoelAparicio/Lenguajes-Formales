@@ -111,13 +111,13 @@ def main():
             #cv2.line(frame, (0, 240), (640, 240), (255, 0, 0), 4)#linea horizontal
             if dedos[0] == 1 and dedos[1] == 1 and dedos[2] == 1 and dedos[3] == 1 and dedos[4] == 1:
                 texto = "Posicion inicial reconocida"
-            if dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
+            elif dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
                 texto = "Dedo indice levantado"
                 if y2 > y3:
                     texto = "Dezlice hacia abajo"
-            if dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 1 and dedos[3] == 0 and dedos[4] == 0:
+            elif dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 1 and dedos[3] == 0 and dedos[4] == 0:
                 texto = "Dedo indice y medio levantados"
-            if dedos[0] == 1 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
+            elif dedos[0] == 1 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
                 texto = "Dedo indice y pulgar levantados"
 
 #recordatorio: Meter en bucle while para que al estar en posicion inicial, se pueda acceder a otra posiciones iniciales
