@@ -107,8 +107,8 @@ def main():
             x3, y3 = coord[0][1], coord[0][2]  # se extraen las coordenas del punto 5
             dedos = detector.dedos_levantados()
 
-            cv2.line(frame, (320, 0), (320, 480), (255, 0, 0), 4)#linea vertical
-            cv2.line(frame, (0, 240), (640, 240), (255, 0, 0), 4)#linea horizontal
+            #cv2.line(frame, (320, 0), (320, 480), (255, 0, 0), 4)#linea vertical
+            #cv2.line(frame, (0, 240), (640, 240), (255, 0, 0), 4)#linea horizontal
             if dedos[0] == 1 and dedos[1] == 1 and dedos[2] == 1 and dedos[3] == 1 and dedos[4] == 1:
                 texto = "Posicion inicial reconocida"
             if dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
