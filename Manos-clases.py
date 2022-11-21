@@ -2,8 +2,9 @@ import cv2
 import mediapipe as mp
 import math
 import numpy as np
-from math import acos, degrees
 import time
+import os
+import pyautogui
 
 
 class principal:
@@ -35,7 +36,7 @@ class principal:
                                                        self.clase_manos.HAND_CONNECTIONS)  # se dibujan las conexiones entre los 21 puntos
         return frame
 
-    def rastreo_posicion(self, frame, numero_mano=0, dibujar=True, texto=""):
+    def rastreo_posicion(self, frame, numero_mano=0, dibujar=True, texto="", texto2=""):
         coord_x = []
         coord_y = []
         rect_box = []  # dibujar el rectangulo que sigue a la mano
@@ -55,6 +56,7 @@ class principal:
             if dibujar:
                 # cv2.rectangle(frame, (xmin - 20, ymin - 20), (xmax + 20, ymax + 20), (0, 255, 0), 2)
                 cv2.putText(frame, '{}'.format(texto), (xmin - 20, ymin - 25), 5, 1.0, (0, 0, 255), 1, cv2.LINE_AA)
+                cv2.putText(frame, '{}'.format(texto2), (xmin - 20, ymin - 50), 5, 0.6, (0, 0, 255), 1, cv2.LINE_AA)
         return self.coord, rect_box
 
     def dedos_levantados(self):
@@ -89,6 +91,7 @@ def main():
     cap.set(3, 640)
     cap.set(4, 480)
     texto = ""
+    texto2 = ""
 
     detector = principal(max_cant_manos=1, min_confianza_deteccion=0.7, min_confianza_rastreo=0.7)
 
@@ -98,31 +101,78 @@ def main():
             break
         frame = detector.detectar_manos(frame)
         coord, rect_box = detector.rastreo_posicion(frame,
-                                                    texto=texto)  # rect_box es el rectangulo que sigue a la mano y almacena las coordenadas minimas y maximas de cada punto
+                                                    texto=texto,
+                                                    texto2=texto2)  # rect_box es el rectangulo que sigue a la mano y almacena las coordenadas minimas y maximas de cada punto
         # coord es una lista que almacena las coordenadas de cada punto de interes
         # print(coord)
-        if len(coord) != 0:#len(coord) cuenta la cantidad de puntos de interes
+        if len(coord) != 0:  # len(coord) cuenta la cantidad de puntos de interes
             x1, y1 = coord[4][1], coord[4][2]  # Se extraen las coordenadas del punto 4
             x2, y2 = coord[8][1], coord[8][2]  # Se extraen las coordenadas del punto 8
-            x3, y3 = coord[0][1], coord[0][2]  # se extraen las coordenas del punto 5
+            x3, y3 = coord[0][1], coord[0][2]  # se extraen las coordenas del punto 0
+            x4, y4 = coord[6][1], coord[6][2]  # se extraen las coordenas del punto 6
+            x5, y5 = coord[5][1], coord[5][2]  # se extraen las coordenas del punto 5
+            dist_8_6 = math.hypot(x2 - x4, y2 - y4)  # se calcula la distancia entre los puntos 8 y 6
+            dist_8_0 = math.hypot(x3 - x1, y3 - y1)  # se calcula la distancia entre los puntos 8 y 0
+            dist_8_4 = math.hypot(x2 - x1, y2 - y1)  # se calcula la distancia entre los puntos 8 y 4
+
             dedos = detector.dedos_levantados()
 
-            #cv2.line(frame, (320, 0), (320, 480), (255, 0, 0), 4)#linea vertical
-            #cv2.line(frame, (0, 240), (640, 240), (255, 0, 0), 4)#linea horizontal
+            #cv2.line(frame, (290, 0), (290, 480), (255, 0, 0), 4)  # linea vertical
+            #cv2.line(frame, (340, 0), (340, 480), (255, 0, 0), 4)  # linea vertical
+            # cv2.line(frame, (0, 240), (640, 240), (255, 0, 0), 4)#linea horizontal
+
             if dedos[0] == 1 and dedos[1] == 1 and dedos[2] == 1 and dedos[3] == 1 and dedos[4] == 1:
-                texto = "Posicion inicial reconocida"
-            elif dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
-                texto = "Dedo indice levantado"
-                if y2 > y3:
-                    texto = "Dezlice hacia abajo"
+                texto = "Posicion inicial"
+
+            elif (dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0):
+
+                if dedos[1] == 1:
+                    texto = "Posicion 1"
+                    if x2 > 290 and x2 < 340:
+                        texto2 = ""
+
+                    if x2 < 290:
+                        texto2 = "izquierda"
+                        pyautogui.hotkey('alt', 'left', interval=(0.5))
+                    if x2 > 340:
+                        texto2 = "derecha"
+                        pyautogui.hotkey('alt', 'right', interval=(0.5))
+
+                    if dist_8_6 < 30:
+                        texto2 = "abajo"
+                        screenshot = pyautogui.screenshot()
+                        screenshot.save("screenshot.png")
+
             elif dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 1 and dedos[3] == 0 and dedos[4] == 0:
-                texto = "Dedo indice y medio levantados"
+
+                if dedos[1] == 1 and dedos[2] == 1:
+                    texto = "Posicion 2"
+
+                    if x2 > 290 and x2 < 340:
+                        texto2 = ""
+
+                    if x2 < 290:
+                        texto2 = "izquierda"
+                        pyautogui.hotkey('ctrl', 'z', interval=(0.5))
+                    if x2 > 340:
+                        texto2 = "derecha"
+                        pyautogui.hotkey('ctrl', 'y', interval=(0.5))
             elif dedos[0] == 1 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
-                texto = "Dedo indice y pulgar levantados"
 
-#recordatorio: Meter en bucle while para que al estar en posicion inicial, se pueda acceder a otra posiciones iniciales
+                if dedos[0] == 1 and dedos[1] == 1:
+                    texto = "Posicion 3"
+                    longitud, frame, linea = detector.distancia(4, 8, frame, radio=4, grosor=2)
 
-            #longitud, frame, linea = detector.distancia(4, 8, frame, radio=5, grosor=3)
+                    if dist_8_4 > 100:
+                        texto2 = ""
+                    elif dist_8_4 > 75 and dist_8_4 < 105:
+                        texto2 = "abierto"
+                        pyautogui.hotkey('ctrl', '+', interval=(0.5))
+                    else:
+                        texto2="cerrado"
+                        pyautogui.hotkey('ctrl', '-', interval=(0.5))
+            if dedos[0] == 0 and dedos[1] == 0 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
+                texto2 = ""
 
 
 
