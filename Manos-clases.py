@@ -174,8 +174,6 @@ def main():
             if dedos[0] == 0 and dedos[1] == 0 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
                 texto2 = ""
 
-
-
         cv2.imshow("Video", frame)
         k = cv2.waitKey(1)
         if k == 27:
