@@ -104,15 +104,15 @@ def main():
                                                     texto=texto,
                                                     texto2=texto2)  # rect_box es el rectangulo que sigue a la mano y almacena las coordenadas minimas y maximas de cada punto
         # coord es una lista que almacena las coordenadas de cada punto de interes
-        # print(coord)
+
         if len(coord) != 0:  # len(coord) cuenta la cantidad de puntos de interes
             x1, y1 = coord[4][1], coord[4][2]  # Se extraen las coordenadas del punto 4
             x2, y2 = coord[8][1], coord[8][2]  # Se extraen las coordenadas del punto 8
-            x3, y3 = coord[0][1], coord[0][2]  # se extraen las coordenas del punto 0
+            #x3, y3 = coord[0][1], coord[0][2]  # se extraen las coordenas del punto 0
             x4, y4 = coord[6][1], coord[6][2]  # se extraen las coordenas del punto 6
-            x5, y5 = coord[5][1], coord[5][2]  # se extraen las coordenas del punto 5
+            #x5, y5 = coord[5][1], coord[5][2]  # se extraen las coordenas del punto 5
             dist_8_6 = math.hypot(x2 - x4, y2 - y4)  # se calcula la distancia entre los puntos 8 y 6
-            dist_8_0 = math.hypot(x3 - x1, y3 - y1)  # se calcula la distancia entre los puntos 8 y 0
+            #dist_8_0 = math.hypot(x3 - x1, y3 - y1)  # se calcula la distancia entre los puntos 8 y 0
             dist_8_4 = math.hypot(x2 - x1, y2 - y1)  # se calcula la distancia entre los puntos 8 y 4
 
             dedos = detector.dedos_levantados()
@@ -124,7 +124,7 @@ def main():
             if dedos[0] == 1 and dedos[1] == 1 and dedos[2] == 1 and dedos[3] == 1 and dedos[4] == 1:
                 texto = "Posicion inicial"
 
-            elif (dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0):
+            elif dedos[0] == 0 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
 
                 if dedos[1] == 1:
                     texto = "Posicion 1"
@@ -132,14 +132,14 @@ def main():
                         texto2 = ""
 
                     if x2 < 290:
-                        texto2 = "izquierda"
+                        texto2 = "ventana anterior"
                         pyautogui.hotkey('alt', 'left', interval=(0.5))
                     if x2 > 340:
-                        texto2 = "derecha"
+                        texto2 = "ventana siguiente"
                         pyautogui.hotkey('alt', 'right', interval=(0.5))
 
                     if dist_8_6 < 30:
-                        texto2 = "abajo"
+                        texto2 = "captura"
                         screenshot = pyautogui.screenshot()
                         screenshot.save("screenshot.png")
 
@@ -152,10 +152,10 @@ def main():
                         texto2 = ""
 
                     if x2 < 290:
-                        texto2 = "izquierda"
+                        texto2 = "deshacer"
                         pyautogui.hotkey('ctrl', 'z', interval=(0.5))
                     if x2 > 340:
-                        texto2 = "derecha"
+                        texto2 = "rehacer"
                         pyautogui.hotkey('ctrl', 'y', interval=(0.5))
             elif dedos[0] == 1 and dedos[1] == 1 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
 
@@ -166,10 +166,10 @@ def main():
                     if dist_8_4 > 100:
                         texto2 = ""
                     elif dist_8_4 > 75 and dist_8_4 < 105:
-                        texto2 = "abierto"
+                        texto2 = "ampliar"
                         pyautogui.hotkey('ctrl', '+', interval=(0.5))
                     else:
-                        texto2="cerrado"
+                        texto2 = "disminuir"
                         pyautogui.hotkey('ctrl', '-', interval=(0.5))
             if dedos[0] == 0 and dedos[1] == 0 and dedos[2] == 0 and dedos[3] == 0 and dedos[4] == 0:
                 texto2 = ""
